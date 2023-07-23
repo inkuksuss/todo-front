@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { RouterView } from 'vue-router';
+
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-    </div>
+    <div class="wrapper"></div>
   </header>
 
   <div>프로젝트 시작</div>
@@ -13,5 +13,4 @@ import { RouterView } from 'vue-router'
   <RouterView />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
