@@ -53,6 +53,8 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
     if (!todo.title || todo.title.trim() === '') return;
 
     this.todoList.push(Object.assign({}, this.getTodoProtoType(), todo));
+
+    // this.dispatchEvent(TODO_EVENT.UPDATE);
   }
   addTodoAt(todo: TodoInterface, seq: number): void {
     if (!todo.title || todo.title.trim() === '') return;
