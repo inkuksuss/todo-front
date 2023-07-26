@@ -1,5 +1,5 @@
 # build stage
-FROM node:20.5.0 as build-stage
+FROM node:20.5.0-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
