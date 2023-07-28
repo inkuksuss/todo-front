@@ -23,6 +23,8 @@ export interface TodoManagerInterface {
   updateTodo(v: TodoInterface, uuid: string): void;
   clearTodo(): void;
   destroy(): void;
+
+  createDefault(): TodoInterface;
 }
 
 class TodoManager extends EventTarget implements TodoManagerInterface {
@@ -52,14 +54,14 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
     // TODO error 처리 필요??
     if (!todo.title || todo.title.trim() === '') return;
 
-    this.todoList.push(Object.assign({}, this.getTodoProtoType(), todo));
+    this.todoList.push(Object.assign({}, this.createDefault(), todo));
 
     // this.dispatchEvent(TODO_EVENT.UPDATE);
   }
   addTodoAt(todo: TodoInterface, seq: number): void {
     if (!todo.title || todo.title.trim() === '') return;
 
-    this.todoList.splice(seq, 0, Object.assign({}, this.getTodoProtoType(), todo));
+    this.todoList.splice(seq, 0, Object.assign({}, this.createDefault(), todo));
   }
   removeTodo(uuid: string): void {
     const findIndex = this.todoList.findIndex((todo) => todo.uuid === uuid);
@@ -87,7 +89,7 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
     this.clearTodo();
   }
 
-  private getTodoProtoType = (): TodoInterface => {
+  createDefault(): TodoInterface {
     const currentTime = new Date();
     const todoObj: TodoInterface = {} as TodoInterface;
 
@@ -98,7 +100,7 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
     todoObj.isDelete = false;
 
     return todoObj;
-  };
+  }
 }
 
 let tdm: TodoManagerInterface | undefined;
