@@ -3,7 +3,8 @@ import axios from 'axios';
 import { CONSTANTS } from '../../constants';
 
 const axiosInstance = axios.create({
-  baseURL: CONSTANTS.API_URL,
+  // baseURL: CONSTANTS.API_URL
+  baseURL: 'http://localhost:8080/api',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json'

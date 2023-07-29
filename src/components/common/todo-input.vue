@@ -1,29 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type PropType, onMounted } from 'vue';
 
 const props = defineProps({
-  value: { type: String || undefined, required: true },
-  placeHolder: { type: String, required: false },
-  length: { type: Number, required: false },
-  read: { type: Boolean, default: false },
-  changeHandler: { type: Function, default: () => {} },
-  enterHandler: { type: Function, default: (v: string | undefined) => {} }
+  value: { type: String as PropType<string | undefined>  , default: undefined, required: true },
+  placeHolder: { type: String as PropType<string>, required: false },
+  length: { type: Number as PropType<number>, required: false },
+  readOnly: { type: Boolean as PropType<boolean>, default: false },
+  changeHandler: {
+    type: Function as PropType<(v: string | undefined) => void>,
+    default: () => {
+      return;
+    }
+  },
+  enterHandler: {
+    type: Function as PropType<(v: string | undefined) => void>,
+    default: (v: string | undefined) => {
+      return;
+    }
+  }
 });
 
-const inputValue = ref<String | undefined>();
+const inputValue = ref<string | undefined>();
 
-const handleChangeInput = (e: KeyboardEvent) => {
+const handleChangeInput = (e: Event): void => {
   const newValue = (e.target as any).value;
   props.changeHandler(newValue);
   inputValue.value = newValue;
 };
 
-const handleKeyUp = (e: KeyboardEvent) => {
+const handleKeyDown = (e: KeyboardEvent): void => {
   if (e.key === 'Enter') {
-    if (e.isComposing || e.keyCode === 229)  return;
+    if (e.isComposing || e.keyCode === 229) return;
     props.enterHandler(inputValue.value);
   }
-}
+};
+
 </script>
 
 <template>
@@ -34,8 +45,8 @@ const handleKeyUp = (e: KeyboardEvent) => {
       :placeholder="placeHolder"
       :maxlength="length"
       @input="handleChangeInput"
-      @keydown="handleKeyUp"
-      :readonly="read"
+      @keydown="handleKeyDown"
+      :readonly="readOnly"
     />
   </div>
 </template>

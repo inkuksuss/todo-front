@@ -1,29 +1,35 @@
+<script lang="ts">
+export default {
+  name: 'App'
+};
+</script>
+
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import TodoInput from '@/components/common/todo-input.vue';
-import { ref, watch } from 'vue';
-import {getTodoManager, TodoInterface} from "@/libs/todo-manager";
+import { onMounted, ref, watch } from 'vue';
+import { createTodoManager } from '@/libs/todo-manager';
+import { getApiInstance } from '@/utils/api';
+import { saveLocalStorage} from "@/utils/common";
+import {CONSTANTS} from "../constants";
 
-const todoList = ref<Array<TodoInterface>>([]);
-
-const todoInput = ref<String | undefined>();
-
-const handleChangeInput = (v: String | undefined) => {
-  todoInput.value = v;
+const getUserInfo = () => {
+  getApiInstance()
+      .post('/member/get-default-member')
+      .then((res) => {
+        const userInfo = res.data;
+        console.log('load')
+        saveLocalStorage(CONSTANTS.KEY.USER_INFO, JSON.stringify(userInfo));
+        createTodoManager();
+      })
+      .catch((e) => {
+        window.alert('사용자 정보를 가져오지 못함')
+        createTodoManager();
+      });
 };
 
-const handleEnter = (v: String | undefined) => {
-  if (!todoInput.value || todoInput.value?.trim() === "") return;
-
-  const todo = getTodoManager().createDefault();
-  todo.title = "제목";
-  todo.description = v as string;
-
-  getTodoManager().addTodo(todo);
-  todoList.value = getTodoManager().getTodoList();
-
-  todoInput.value = "";
-}
+onMounted(() => {
+  getUserInfo();
+});
 </script>
 
 <template>
@@ -31,13 +37,9 @@ const handleEnter = (v: String | undefined) => {
     <div class="wrapper"></div>
   </header>
 
-  <div>TODO LIST</div>
-  <div v-for="(todo, index) in todoList" class="flex flex-col border-2 border-black">
-    <span>번호: {{index}}</span>
-    <span>제목: {{todo.title}}</span>
-    <span>내용: {{todo.description}}</span>
+  <div>
+    <a href="/todo">Todo 바로가기</a>
   </div>
-  <todo-input :value="todoInput" :change-handler="handleChangeInput" :enter-handler="handleEnter"></todo-input>
 
   <RouterView />
 </template>
