@@ -1,5 +1,5 @@
 import { type BaseInterface, OBJECT_TYPE } from '@/utils/type';
-import { getUserInfo, getUuid, loadLocalStorage, saveLocalStorage } from '@/utils/common';
+import { getUserInfo, getUuid, loadLocalStorage } from '@/utils/common';
 import { CONSTANTS } from '../../constants';
 
 export const TODO_EVENT = {
@@ -27,6 +27,7 @@ export interface TodoManagerInterface extends EventTarget {
     clearTodo(): void;
     destroy(): void;
     createDefault(): TodoInterface;
+    changeTodoList(v: string | null): void;
     getObjectData(): TodoManagerDataInterface;
     setObjectData(obj: TodoManagerDataInterface): void;
 }
@@ -72,16 +73,14 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
         if (!loadUserInfo) return;
 
         const todoData = loadUserInfo.todoList;
-        console.log('init', todoData);
         if (todoData && todoData.length > 0) {
             this.setObjectData({
-                todoId: todoData[0].id,
+                todoId: todoData[0].todoId,
                 title: todoData[0].title,
                 todoList: JSON.parse(todoData[0].content),
                 createdAt: todoData[0].createdAt,
                 updatedAt: todoData[0].updatedAt
             });
-            console.log('call');
             this.dispatchEvent(new CustomEvent(TODO_EVENT.UPDATE));
         }
     }
@@ -171,6 +170,13 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
         return todoObj;
     }
 
+    changeTodoList(v: string | null): void {
+        if (!v) return;
+
+        this._todoList = JSON.parse(v);
+        this.dispatchEvent(new Event(TODO_EVENT.UPDATE));
+    }
+
     getObjectData(): TodoManager {
         return <TodoManager>{
             todoId: this._todoId,
@@ -192,17 +198,25 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
     get updatedAt(): Date {
         return this._updatedAt;
     }
+
     get createdAt(): Date {
         return this._createdAt;
     }
+
     get todoList(): Array<TodoInterface> {
         return this._todoList;
     }
+
     get title(): string | undefined {
         return this._title;
     }
+
     get todoId(): number | undefined {
         return this._todoId;
+    }
+
+    set todoId(value: number | undefined) {
+        this._todoId = value;
     }
 }
 

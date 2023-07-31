@@ -44,7 +44,10 @@ const handleClickSave = () => {
     getApiInstance()
         .post('/todo/save', params)
         .then((res) => {
-            window.alert('저장되었습니다');
+          const tm = getTodoManager();
+          if (!tm.todoId) tm.todoId = res.data.todoId;
+          tm.changeTodoList(res.data.content);
+          window.alert('저장되었습니다');
         })
         .catch((e) => console.log(e));
 };
