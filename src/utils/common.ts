@@ -15,8 +15,8 @@ export const loadLocalStorage = (key: string): any => {
     return null;
 };
 
-export const saveLocalStorage = (key: string, value: any) => {
-    window.localStorage.setItem(encodeString(key), encodeString(JSON.stringify(value)));
+export const saveLocalStorage = (key: string, value: string) => {
+    window.localStorage.setItem(encodeString(key), encodeString(value));
 };
 
 export const clearLocalStorage = () => {
@@ -34,7 +34,5 @@ export const decodeString = (v: string): string => {
 export const getUserInfo = () => {
     const loadUserInfo = loadLocalStorage(CONSTANTS.KEY.USER_INFO);
 
-    if (loadUserInfo) return JSON.parse(loadUserInfo);
-
-    return undefined;
+    return loadUserInfo ?? undefined;
 };

@@ -12,6 +12,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@types/lodash.clonedeep": "^4.5.7",
     "axios": "^1.4.0",
     "esbuild": "^0.18.16",
     "vue": "^3.3.4",

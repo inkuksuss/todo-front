@@ -1,5 +1,5 @@
 import { type BaseInterface, OBJECT_TYPE } from '@/utils/type';
-import { getUserInfo, getUuid, loadLocalStorage } from '@/utils/common';
+import { getUserInfo, getUuid, loadLocalStorage, saveLocalStorage } from '@/utils/common';
 import { CONSTANTS } from '../../constants';
 
 export const TODO_EVENT = {
@@ -17,6 +17,7 @@ export interface TodoInterface extends BaseInterface {
 }
 
 export interface TodoManagerInterface extends EventTarget {
+    initialize(): void;
     getTodoList(): Array<TodoInterface>;
     getTodoByUuId(uuid: string): TodoInterface | null;
     addTodo(v: TodoInterface): void;
@@ -65,11 +66,32 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
         }
     }
 
+    initialize() {
+        const loadUserInfo = loadLocalStorage(CONSTANTS.KEY.USER_INFO);
+
+        if (!loadUserInfo) return;
+
+        const todoData = loadUserInfo.todoList;
+        console.log('init', todoData);
+        if (todoData && todoData.length > 0) {
+            this.setObjectData({
+                todoId: todoData[0].id,
+                title: todoData[0].title,
+                todoList: JSON.parse(todoData[0].content),
+                createdAt: todoData[0].createdAt,
+                updatedAt: todoData[0].updatedAt
+            });
+            console.log('call');
+            this.dispatchEvent(new CustomEvent(TODO_EVENT.UPDATE));
+        }
+    }
+
     getTodoList(): Array<TodoInterface> {
         const todoList = this._todoList ?? [];
 
         return todoList.filter((todo) => !todo.isDelete);
     }
+
     getTodoByUuId(uuid: string): TodoInterface | null {
         const todoList = this._todoList ?? [];
         const findTodo = todoList
@@ -90,6 +112,7 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
 
         this.dispatchEvent(new CustomEvent(TODO_EVENT.UPDATE, { detail: newTodo.uuid }));
     }
+
     addTodoAt(todo: TodoInterface, index: number): void {
         if (!todo.title || todo.title.trim() === '') return;
 
@@ -99,6 +122,7 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
 
         this.dispatchEvent(new CustomEvent(TODO_EVENT.UPDATE, { detail: newTodo.uuid }));
     }
+
     removeTodo(uuid: string): void {
         const findIndex = this._todoList.findIndex((todo) => todo.uuid === uuid);
 
@@ -109,6 +133,7 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
             this.dispatchEvent(new CustomEvent(TODO_EVENT.UPDATE, { detail: removedUuid }));
         }
     }
+
     updateTodo(todo: TodoInterface, uuid: string): void {
         const findIndex = this._todoList.findIndex((todo) => todo.uuid === uuid);
 
@@ -156,7 +181,7 @@ class TodoManager extends EventTarget implements TodoManagerInterface {
         };
     }
 
-    setObjectData(obj: TodoManager): void {
+    setObjectData(obj: TodoManagerDataInterface): void {
         this._todoId = obj.todoId;
         this._title = obj.title;
         this._todoList = obj.todoList;
