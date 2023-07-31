@@ -3,36 +3,36 @@ import axios from 'axios';
 import { CONSTANTS } from '../../constants';
 
 const axiosInstance = axios.create({
-  // baseURL: CONSTANTS.API_URL
-  baseURL: 'http://localhost:8080/api',
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
+    baseURL: CONSTANTS.API_URL,
+    // baseURL: 'http://localhost:8080/api',
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+    }
 });
 
 // instance.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 axiosInstance.interceptors.request.use(
-  function (config) {
-    return config;
-  },
-  function (error) {
-    return Promise.reject(error);
-  }
+    function (config) {
+        return config;
+    },
+    function (error) {
+        return Promise.reject(error);
+    }
 );
 
 axiosInstance.interceptors.response.use(
-  function (response) {
-    return response;
-  },
-  function (error) {
-    return Promise.reject(error);
-  }
+    function (response) {
+        return response;
+    },
+    function (error) {
+        return Promise.reject(error);
+    }
 );
 
 export const getApiInstance = () => {
-  return axiosInstance;
+    return axiosInstance;
 };
 
 // example
