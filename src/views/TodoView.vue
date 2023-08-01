@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { getTodoManager, TODO_EVENT, type TodoInterface } from '@/libs/todo-manager';
 import TodoInput from '@/components/common/todo-input.vue';
 import { getApiInstance } from '@/utils/api';
@@ -44,10 +44,10 @@ const handleClickSave = () => {
     getApiInstance()
         .post('/todo/save', params)
         .then((res) => {
-          const tm = getTodoManager();
-          if (!tm.todoId) tm.todoId = res.data.todoId;
-          tm.changeTodoList(res.data.content);
-          window.alert('저장되었습니다');
+            const tm = getTodoManager();
+            if (!tm.todoId) tm.todoId = res.data.todoId;
+            tm.changeTodoList(res.data.content);
+            window.alert('저장되었습니다');
         })
         .catch((e) => console.log(e));
 };
@@ -65,6 +65,10 @@ getTodoManager().addEventListener(TODO_EVENT.UPDATE, updateTodoList);
 
 onMounted(() => {
     updateTodoList();
+});
+
+onUnmounted(() => {
+    getTodoManager().removeEventListener(TODO_EVENT.UPDATE, updateTodoList);
 });
 </script>
 
