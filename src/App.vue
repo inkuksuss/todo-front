@@ -12,23 +12,23 @@ import { getApiInstance } from '@/utils/api';
 import { saveLocalStorage } from '@/utils/common';
 import { CONSTANTS } from '../constants';
 
-const getUserInfo = () => {
-    getApiInstance()
-        .post('/member/get-default-member')
-        .then((res) => {
-            const userInfo = res.data;
-            saveLocalStorage(CONSTANTS.KEY.USER_INFO, JSON.stringify(userInfo));
-            createTodoManager().initialize();
-        })
-        .catch((e) => {
-            window.alert('사용자 정보를 가져오지 못함');
-            createTodoManager();
-        });
-};
-
-onMounted(() => {
-    getUserInfo();
-});
+// const getUserInfo = () => {
+//     getApiInstance()
+//         .post('/member/get-default-member')
+//         .then((res) => {
+//             const userInfo = res.data;
+//             saveLocalStorage(CONSTANTS.KEY.USER_INFO, JSON.stringify(userInfo));
+//             createTodoManager().initialize();
+//         })
+//         .catch((e) => {
+//             window.alert('사용자 정보를 가져오지 못함');
+//             createTodoManager();
+//         });
+// };
+//
+// onMounted(() => {
+//     getUserInfo();
+// });
 </script>
 
 <template>
@@ -36,8 +36,9 @@ onMounted(() => {
         <div class="wrapper"></div>
     </header>
 
-    <div>
+    <div class="flex flex-col">
         <a href="/todo">Todo 바로가기</a>
+        <a href="/login">Login 바로가기</a>
     </div>
 
     <RouterView />
