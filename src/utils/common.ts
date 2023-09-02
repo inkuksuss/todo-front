@@ -19,6 +19,10 @@ export const saveLocalStorage = (key: string, value: string) => {
     window.localStorage.setItem(encodeString(key), encodeString(value));
 };
 
+export const removeLocalStorage = (key: string) => {
+    window.localStorage.removeItem(encodeString(key));
+};
+
 export const clearLocalStorage = () => {
     window.localStorage.clear();
 };

@@ -6,11 +6,28 @@ export default {
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import { onMounted } from 'vue';
-import { createTodoManager } from '@/libs/todo-manager';
-import { getApiInstance } from '@/utils/api';
-import { saveLocalStorage } from '@/utils/common';
+import {computed, onMounted, ref, watch} from 'vue';
+import { loadLocalStorage, saveLocalStorage } from '@/utils/common';
 import { CONSTANTS } from '../constants';
+import { useStore } from 'vuex';
+import { MUTATION_TYPE, type UserInfoState } from '@/store/store';
+import TodoHeader from '@/components/todo-header.vue';
+
+const store = useStore();
+const compUserInfo = computed(() => store.state.userInfo);
+const userInfo = ref<UserInfoState>();
+
+const initUserInfo = () => {
+    console.log('store', compUserInfo.value);
+    console.log('storage', loadLocalStorage(CONSTANTS.KEY.USER_INFO));
+    if (compUserInfo.value) return;
+
+    const user = loadLocalStorage(CONSTANTS.KEY.USER_INFO);
+    if (user) {
+        store.commit(MUTATION_TYPE.SET_USER_INFO, user as UserInfoState);
+        return;
+    }
+};
 
 // const getUserInfo = () => {
 //     getApiInstance()
@@ -25,20 +42,32 @@ import { CONSTANTS } from '../constants';
 //             createTodoManager();
 //         });
 // };
-//
-// onMounted(() => {
-//     getUserInfo();
-// });
+
+onMounted(() => {
+
+    initUserInfo();
+
+});
+
+watch(
+    () => compUserInfo.value,
+    (next, prev) => {
+      console.log('call watch', next)
+        userInfo.value = next;
+    }
+);
 </script>
 
 <template>
     <header>
+        <todo-header :user-info="userInfo"></todo-header>
         <div class="wrapper"></div>
     </header>
 
     <div class="flex flex-col">
         <a href="/todo">Todo 바로가기</a>
         <a href="/login">Login 바로가기</a>
+        <a href="/join">Join 바로가기</a>
     </div>
 
     <RouterView />

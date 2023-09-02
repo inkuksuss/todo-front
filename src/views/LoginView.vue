@@ -9,10 +9,17 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { getTodoManager, TODO_EVENT, type TodoInterface } from '@/libs/todo-manager';
 import TodoInput from '@/components/common/todo-input.vue';
 import { getApiInstance } from '@/utils/api';
-import { getUserInfo } from '@/utils/common';
+import {getUserInfo, saveLocalStorage} from '@/utils/common';
+import {useRouter} from "vue-router";
+import {CONSTANTS} from "../../constants";
+import {useStore} from "vuex";
+import {MUTATION_TYPE, UserInfoState} from "@/store/store";
 
+const store = useStore();
+const router = useRouter();
 const inputEmail = ref<string | undefined>();
 const inputPassword = ref<string | undefined>();
+
 
 const handleChangeEmail = (v: string | undefined) => {
     inputEmail.value = v;
@@ -24,36 +31,23 @@ const handleChangePassword = (v: string | undefined) => {
 
 const handleClickLogin = () => {
     const params = {
-
+        email: inputEmail.value,
+        password: inputPassword.value
     };
-
     getApiInstance()
         .post('/member/login', params)
         .then((res) => {
-            console.log('res',res);
+            const userInfo = {
+              username: res.data.data.username,
+              token: res.data.data.token
+            }
+
+            saveLocalStorage(CONSTANTS.KEY.USER_INFO, JSON.stringify(userInfo));
+            store.commit(MUTATION_TYPE.SET_USER_INFO, userInfo as UserInfoState);
+            router.push("/");
         })
         .catch((e) => console.log(e));
 };
-
-const getGoogleLoginUrl = () => {
-  let googleEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
-  const clientId = "?client_id=844025267242-2v64m9eh9r12ur9eqj1lej24l3ur1qd9.apps.googleusercontent.com";
-  const redirectUrl = "&redirect_uri=http://localhost:8082/api/oauth/code/google"
-  const responseType = "&response_type=code";
-  const scope = "&scope=profile email"
-  return googleEndpoint + clientId + redirectUrl + responseType + scope;
-}
-
-// const handleClickGoogleLogin = () => {
-//
-//
-//   getApiInstance()
-//       .get(googleEndpoint + clientId + redirectUrl + responseType + scope)
-//       .then((res) => {
-//         console.log(res);
-//       })
-//       .catch((e) => console.log(e));
-// };
 
 onMounted(() => {});
 
@@ -69,8 +63,8 @@ onUnmounted(() => {});
       <todo-input :value="inputPassword" :change-handler="handleChangePassword"></todo-input>
       <button @click="handleClickLogin">Login</button>
 
-      <a :href="getGoogleLoginUrl()">구글 로그인</a>
-<!--      <button @click="handleClickGoogleLogin">구글 로그인</button>-->
+      <a href="http://localhost:8082/api/oauth2/authorization/google">구글 로그인</a>
+      <a href="http://localhost:8082/api/oauth2/authorization/naver">네이버 로그인</a>
     </div>
 
 </template>

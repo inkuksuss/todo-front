@@ -1,6 +1,5 @@
 // 요청 인터셉터 추가하기
 import axios from 'axios';
-import { CONSTANTS } from '../../constants';
 
 const axiosInstance = axios.create({
     // baseURL: CONSTANTS.API_URL,
@@ -33,6 +32,10 @@ axiosInstance.interceptors.response.use(
 
 export const getApiInstance = () => {
     return axiosInstance;
+};
+
+export const setApiAccessToken = (token: string) => {
+    axiosInstance.defaults.headers.common['X-AUTH-TOKEN'] = token;
 };
 
 // example
