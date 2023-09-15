@@ -6,7 +6,7 @@ export default {
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import {computed, onMounted, ref, watch} from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { loadLocalStorage, saveLocalStorage } from '@/utils/common';
 import { CONSTANTS } from '../constants';
 import { useStore } from 'vuex';
@@ -44,15 +44,13 @@ const initUserInfo = () => {
 // };
 
 onMounted(() => {
-
     initUserInfo();
-
 });
 
 watch(
     () => compUserInfo.value,
     (next, prev) => {
-      console.log('call watch', next)
+        console.log('call watch', next);
         userInfo.value = next;
     }
 );
@@ -68,6 +66,7 @@ watch(
         <a href="/todo">Todo 바로가기</a>
         <a href="/login">Login 바로가기</a>
         <a href="/join">Join 바로가기</a>
+        <a href="/chat">Chat 바로가기</a>
     </div>
 
     <RouterView />

@@ -27,6 +27,11 @@ const router = createRouter({
             path: '/oauth/redirect',
             name: 'OauthRedirect',
             component: () => import('@/views/OauthRedirect.vue')
+        },
+        {
+            path: '/chat',
+            name: 'ChatView',
+            component: () => import('@/views/ChatView.vue')
         }
     ]
 });
