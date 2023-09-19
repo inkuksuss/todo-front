@@ -24,18 +24,32 @@ const connect = (value: number) => {
     stompClient.connect(
         {},
         (frame) => {
-            connected = true;
-            console.log('소켓 연결 성공', frame);
+            let url = stompClient.ws._transport.url;
 
-            stompClient.subscribe('/topic/room/1', (res) => {
-                console.log('구독으로 받은 메시지 입니다.', res.body);
-              const parse = JSON.parse(res.body);
-              console.log(parse)
+            console.log('frames', frame);
+
+            url = url.replace('ws://localhost:3003/chat-server/', '');
+            url = url.replace('/websocket?authentication=' + value, '');
+            url = url.replace(/^[0-9]+\//, '');
+            console.log('Your current session is: ' + url);
+            const sessionId = url;
+            connected = true;
+
+            stompClient.subscribe('/queue/init-user' + sessionId, (res) => {
+                console.warn('init2 res', res);
             });
 
-            if (value === 1) {
-                stompClient.send('/app/chat/join', JSON.stringify({ token: 1, data: 'test' }));
-            }
+            stompClient.send('/app/chat/init', JSON.stringify({ token: value }));
+
+            // stompClient.subscribe('/topic/room/1', (res) => {
+            //     console.log('구독으로 받은 메시지 입니다.', res.body);
+            //     const parse = JSON.parse(res.body);
+            //     console.log(parse);
+            // });
+            //
+            // if (value === 1) {
+            //     stompClient.send('/app/chat/join', JSON.stringify({ token: 1, data: 'test' }));
+            // }
         },
         (error) => {
             console.log('소켓 연결 실패', error);
