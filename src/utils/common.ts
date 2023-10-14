@@ -1,4 +1,5 @@
 import { CONSTANTS } from '../../constants';
+import { type User } from '@/utils/type';
 
 export const getUuid = (): string => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -35,8 +36,13 @@ export const decodeString = (v: string): string => {
     return decodeURIComponent(v);
 };
 
-export const getUserInfo = () => {
+export const getUserInfo = (): User => {
     const loadUserInfo = loadLocalStorage(CONSTANTS.KEY.USER_INFO);
 
     return loadUserInfo ?? undefined;
+};
+
+export const getUserId = (): string => {
+    const loadUserInfo = loadLocalStorage(CONSTANTS.KEY.USER_INFO);
+    return loadUserInfo ? loadUserInfo.id : '1';
 };
